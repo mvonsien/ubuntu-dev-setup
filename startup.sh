@@ -1,16 +1,11 @@
 echo "Welcome! Let's start setting up your system. It could take more than 10 minutes, be patient"
 
-echo "What name do you want to use in GIT user.name?"
-echo "For example \"Marian Vonsien\""
-read git_config_user_name
-
-echo "What email do you want to use in GIT user.email?"
-echo "For example \"marianvon29@gmail.com\""
-read git_config_user_email
-
-echo "What is your github username?"
-echo "For example \"marianvon29\""
-read username
+read -p "Enter your GIT user.name [Marian Vonsien]: " git_config_user_name
+git_config_user_name=${git_config_user_name:-Marian Vonsien}
+read -p "Enter your GIT user.email [marianvon29@gmail.com]: " git_config_user_email
+git_config_user_email=${git_config_user_email:-marianvon29@gmail.com}
+read -p "Enter your github username [marianvon29]: " username
+username=${username:-marianvon29}
 
 cd ~ && sudo apt update && sudo apt upgrade -y
 
@@ -24,7 +19,7 @@ echo 'Installing neofetch'
 sudo apt install neofetch -y
 
 echo 'Installing some basic packages'
-sudo apt install ca-certificates gnupg lsb-release mercurial make binutils gcc build-essential apt install libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl -y
+sudo apt install ca-certificates gnupg lsb-release mercurial make binutils gcc build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl -y
 
 echo 'Installing tool to handle clipboard via CLI'
 sudo apt install xclip -y
@@ -37,7 +32,7 @@ sudo add-apt-repository ppa:git-core/ppa -y
 sudo apt update && sudo apt install git -y
 
 echo 'Installing python3-pip'
-sudo apt-get install python3-pip -y
+sudo apt install python3-pip -y
 
 echo "Setting up your git global user name and email"
 git config --global user.name "$git_config_user_name"
@@ -153,34 +148,34 @@ mkdir ~/.config/Insomnia/plugins && cd ~/.config/Insomnia/plugins
 git clone https://github.com/Rocketseat/insomnia-omni.git omni-theme && cd ~
 
 echo 'Installing VLC'
-sudo apt-get install vlc -y
-sudo apt-get install vlc-plugin-access-extra libbluray-bdj libdvdcss2 -y
+sudo apt install vlc -y
+sudo apt install vlc-plugin-access-extra libbluray-bdj libdvdcss2 -y
 
 echo 'Installing Discord'
 wget -O discord.deb "https://discordapp.com/api/download?platform=linux&format=deb"
 sudo dpkg -i discord.deb
-sudo apt-get install -f -y && rm discord.deb
+sudo apt install -f -y && rm discord.deb
 
 echo 'Installing Zoom'
 wget -c https://zoom.us/client/latest/zoom_amd64.deb
 sudo dpkg -i zoom_amd64.deb
-sudo apt-get install -f -y && rm zoom_amd64.deb
+sudo apt install -f -y && rm zoom_amd64.deb
 
 echo 'Installing Spotify' 
 curl -sS https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
-sudo apt-get update && sudo apt-get install spotify-client -y
+sudo apt update && sudo apt install spotify-client -y
 
 echo 'Installing Peek' 
 sudo add-apt-repository ppa:peek-developers/stable -y
-sudo apt-get update && sudo apt-get install peek -y
+sudo apt update && sudo apt install peek -y
 
 echo 'Installing Lotion'
 sudo git clone https://github.com/puneetsl/lotion.git /usr/local/lotion
 cd /usr/local/lotion && sudo ./install.sh
 
 echo 'Updating and Cleaning Unnecessary Packages'
-sudo -- sh -c 'apt-get update; apt-get upgrade -y; apt-get full-upgrade -y; apt-get autoremove -y; apt-get autoclean -y'
+sudo -- sh -c 'apt update; apt upgrade -y; apt full-upgrade -y; apt autoremove -y; apt autoclean -y'
 clear
 
 echo 'Bumping the max file watchers'
