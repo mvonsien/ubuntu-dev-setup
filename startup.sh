@@ -1,86 +1,81 @@
 echo "Welcome! Let's start setting up your system. It could take more than 10 minutes, be patient"
 
 echo "What name do you want to use in GIT user.name?"
-echo "For example, mine will be \"Luke Morales\""
+echo "For example \"Marian Vonsien\""
 read git_config_user_name
 
 echo "What email do you want to use in GIT user.email?"
-echo "For example, mine will be \"lukemorales@live.com\""
+echo "For example \"marianvon29@gmail.com\""
 read git_config_user_email
 
 echo "What is your github username?"
-echo "For example, mine will be \"lukemorales\""
+echo "For example \"marianvon29\""
 read username
 
-cd ~ && sudo apt-get update
+cd ~ && sudo apt update && sudo apt upgrade -y
+
+echo 'Installing vim' 
+sudo apt install vim -y
 
 echo 'Installing curl' 
-sudo apt-get install curl -y
+sudo apt install curl -y
 
 echo 'Installing neofetch' 
-sudo apt-get install neofetch -y
+sudo apt install neofetch -y
+
+echo 'Installing some basic packages'
+sudo apt install ca-certificates gnupg lsb-release mercurial make binutils gcc build-essential apt install libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl -y
 
 echo 'Installing tool to handle clipboard via CLI'
-sudo apt-get install xclip -y
+sudo apt install xclip -y
+
+echo 'alias copy="xclip -selection clipboard"' >> ~/.bash_aliases
+echo 'alias paste="xclip -selection clipboard -o"' >> ~/.bash_aliases
 
 echo 'Installing latest git' 
 sudo add-apt-repository ppa:git-core/ppa -y
-sudo apt-get update && sudo apt-get install git -y
+sudo apt update && sudo apt install git -y
 
 echo 'Installing python3-pip'
 sudo apt-get install python3-pip -y
-
-echo 'Installing getgist to download dot files from gist'
-sudo pip3 install getgist
-export GETGIST_USER=$username
-
-if [$XDG_CURRENT_DESKTOP == 'KDE'] ; then
-    echo 'Cloning your Konsole configs from gist'
-    cd ~/.local/share/konsole && getmy OmniKonsole.profile && getmy OmniTheme.colorscheme
-
-    echo 'Installing Latte Dock'
-    sudo add-apt-repository ppa:kubuntu-ppa/backports -y
-    sudo apt-get update && sudo apt-get dist-upgrade
-    sudo apt-get install cmake extra-cmake-modules qtdeclarative5-dev libqt5x11extras5-dev libkf5iconthemes-dev libkf5plasma-dev libkf5windowsystem-dev libkf5declarative-dev libkf5xmlgui-dev libkf5activities-dev build-essential libxcb-util-dev libkf5wayland-dev git gettext libkf5archive-dev libkf5notifications-dev libxcb-util0-dev libsm-dev libkf5crash-dev libkf5newstuff-dev libxcb-shape0-dev libxcb-randr0-dev libx11-dev libx11-xcb-dev -y
-    sudo git clone https://github.com/KDE/latte-dock.git /usr/local/latte-dock
-    cd /usr/local/latte-dock && sudo sh install.sh
-
-    echo 'Installing Kvantum Manager'
-    sudo add-apt-repository ppa:papirus/papirus -y
-    sudo apt-get update && sudo apt install qt5-style-kvantum -y
-fi
 
 echo "Setting up your git global user name and email"
 git config --global user.name "$git_config_user_name"
 git config --global user.email $git_config_user_email
 
-echo 'Cloning your .gitconfig from gist'
-getmy .gitconfig
-
 echo 'Generating a SSH Key'
-ssh-keygen -t rsa -b 4096 -C $git_config_user_email
-ssh-add ~/.ssh/id_rsa
-cat ~/.ssh/id_rsa.pub | xclip -selection clipboard
+ssh-keygen -t ed25519 -C $git_config_user_email
+ssh-add ~/.ssh/id_ed25519
+cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+echo 'Copied public SSH key to clipboard'
 
-echo 'Installing ZSH'
-sudo apt-get install zsh -y
-sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-chsh -s $(which zsh)
+echo 'Installing penv'
+curl https://pyenv.run | bash
+echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> .bashrc
+echo 'eval "$(pyenv init -)"' >> .bashrc
+echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+source ~/.bashrc
+pyenv install 3
+pyenv global 3
 
-echo 'Cloning your .zshrc from gist'
-getmy .zshrc
+echo 'Installling pdm'
+curl -sSL https://pdm-project.org/install-pdm.py | python3 -
 
-echo 'Indexing snap to ZSH'
-sudo chmod 777 /etc/zsh/zprofile
-echo "emulate sh -c 'source /etc/profile.d/apps-bin-path.sh'" >> /etc/zsh/zprofile
+echo 'Installing bison and gvm'
+sudo apt install bison -y
+bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+echo '[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"' >> ~/.bashrc
+source ~/.bashrc
 
-echo 'Installing Spaceship ZSH Theme'
-git clone https://github.com/denysdovhan/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt"
-ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
-source ~/.zshrc
-
-echo 'Installing FiraCode'
-sudo apt-get install fonts-firacode -y
+echo 'Installing go 1.4, 1.17, 1.20'
+gvm install go1.4 -B
+gvm use go1.4
+export GOROOT_BOOTSTRAP=$GOROOT
+gvm install go1.17.13
+gvm use go1.17.13
+export GOROOT_BOOTSTRAP=$GOROOT
+gvm install go1.20
+gvm use go1.20
 
 echo 'Installing NVM' 
 sh -c "$(curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash)"
@@ -94,7 +89,6 @@ git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-source ~/.zshrc
 clear
 
 echo 'Installing NodeJS LTS'
@@ -105,70 +99,59 @@ nvm current
 echo 'Installing Yarn'
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-sudo apt-get update && sudo apt-get install --no-install-recommends yarn
+sudo apt update && sudo apt install --no-install-recommends yarn
 echo '"--emoji" true' >> ~/.yarnrc
 
-echo 'Installing Typescript, AdonisJS CLI and Lerna'
-yarn global add typescript @adonisjs/cli lerna
+echo 'Installing Typescript'
+yarn global add typescript
 clear
 
 echo 'Installing VSCode'
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
 sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-sudo apt-get install apt-transport-https -y
-sudo apt-get update && sudo apt-get install code -y
+sudo apt install apt-transport-https -y
+sudo apt update && sudo apt install code -y
 
 echo 'Installing Code Settings Sync'
 code --install-extension Shan.code-settings-sync
-sudo apt-get install gnome-keyring -y
+sudo apt install gnome-keyring -y
 cls
 
-echo 'Installing Vivaldi' 
-wget -qO- https://repo.vivaldi.com/archive/linux_signing_key.pub | sudo apt-key add -
-sudo add-apt-repository 'deb https://repo.vivaldi.com/archive/deb/ stable main' -y
-sudo apt update && sudo apt install vivaldi-stable
+echo 'Uinstalling old Docker versions'
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt remove $pkg; done
 
-echo 'Launching Vivaldi on Github so you can paste your keys'
-vivaldi https://github.com/settings/keys </dev/null >/dev/null 2>&1 & disown
+echo 'Installing docker and docker-compose'
+# Add Docker's official GPG key:
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-echo 'Installing Docker'
-sudo apt-get purge docker docker-engine docker.io
-sudo apt-get install docker.io -y
-sudo systemctl start docker
-sudo systemctl enable docker
-docker --version
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
 sudo groupadd docker
 sudo usermod -aG docker $USER
+newgrp docker
 sudo chmod 777 /var/run/docker.sock
+docker run --rm hello-world
 
-echo 'Installing docker-compose'
-sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+docker --version
 docker-compose --version
-
-echo 'Installing Heroku CLI'
-curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
-heroku --version
-
-echo 'Installing PostBird'
-wget -c https://github.com/Paxa/postbird/releases/download/0.8.4/Postbird_0.8.4_amd64.deb
-sudo dpkg -i Postbird_0.8.4_amd64.deb
-sudo apt-get install -f -y && rm Postbird_0.8.4_amd64.deb
 
 echo 'Installing Insomnia Core and Omni Theme' 
 echo "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
   | sudo tee -a /etc/apt/sources.list.d/insomnia.list
 wget --quiet -O - https://insomnia.rest/keys/debian-public.key.asc \
   | sudo apt-key add -
-sudo apt-get update && sudo apt-get install insomnia -y
+sudo apt update && sudo apt install insomnia -y
 mkdir ~/.config/Insomnia/plugins && cd ~/.config/Insomnia/plugins
 git clone https://github.com/Rocketseat/insomnia-omni.git omni-theme && cd ~
-
-echo 'Installing Android Studio'
-sudo add-apt-repository ppa:maarten-fonville/android-studio -y
-sudo apt-get update && sudo apt-get install android-studio -y
 
 echo 'Installing VLC'
 sudo apt-get install vlc -y
@@ -193,33 +176,12 @@ echo 'Installing Peek'
 sudo add-apt-repository ppa:peek-developers/stable -y
 sudo apt-get update && sudo apt-get install peek -y
 
-echo 'Installing OBS Studio'
-sudo apt-get install ffmpeg && sudo snap install obs-studio
-
-echo 'Enabling KVM for Android Studio'
-sudo apt-get install qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils virt-manager -y
-sudo adduser $USER libvirt
-sudo adduser $USER libvirt-qemu
-
-echo 'Installing Robo3t'
-sudo snap install robo3t-snap
-
 echo 'Installing Lotion'
 sudo git clone https://github.com/puneetsl/lotion.git /usr/local/lotion
 cd /usr/local/lotion && sudo ./install.sh
 
 echo 'Updating and Cleaning Unnecessary Packages'
 sudo -- sh -c 'apt-get update; apt-get upgrade -y; apt-get full-upgrade -y; apt-get autoremove -y; apt-get autoclean -y'
-clear
-
-echo 'Installing postgis container'
-docker run --name postgis -e POSTGRES_PASSWORD=docker -p 5432:5432 -d kartoza/postgis
-
-echo 'Installing mongodb container'
-docker run --name mongodb -p 27017:27017 -d -t mongo
-
-echo 'Installing redis container'
-docker run --name redis_skylab -p 6379:6379 -d -t redis:alpine
 clear
 
 echo 'Bumping the max file watchers'
