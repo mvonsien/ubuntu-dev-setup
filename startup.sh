@@ -142,33 +142,11 @@ wget -c https://zoom.us/client/latest/zoom_amd64.deb
 sudo dpkg -i zoom_amd64.deb
 sudo apt install -f -y && rm zoom_amd64.deb
 
-echo 'Installing Spotify' 
-curl -sS https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
-sudo apt update && sudo apt install spotify-client -y
-
-echo 'Installing Peek' 
-sudo add-apt-repository ppa:peek-developers/stable -y
-sudo apt update && sudo apt install peek -y
-
-echo 'Installing Lotion'
-sudo git clone https://github.com/puneetsl/lotion.git /usr/local/lotion
-cd /usr/local/lotion && sudo ./install.sh
-
 echo 'Updating and Cleaning Unnecessary Packages'
 sudo -- sh -c 'apt update; apt upgrade -y; apt full-upgrade -y; apt autoremove -y; apt autoclean -y'
 clear
 
 echo 'Bumping the max file watchers'
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-
-echo 'Generating GPG key'
-gpg --full-generate-key
-gpg --list-secret-keys --keyid-format LONG
-
-echo 'Paste the GPG key ID to export and add to your global .gitconfig'
-read gpg_key_id
-git config --global user.signingkey $gpg_key_id
-gpg --armor --export $gpg_key_id
 
 echo 'All setup, enjoy!'
