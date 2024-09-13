@@ -19,13 +19,13 @@ echo 'Installing neofetch'
 sudo apt install neofetch -y
 
 echo 'Installing some basic packages'
-sudo apt install ca-certificates gnupg lsb-release mercurial make binutils gcc build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl -y
+sudo apt install libfuse2 ca-certificates gnupg lsb-release mercurial make binutils gcc build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl -y
 
 echo 'Installing tool to handle clipboard via CLI'
 sudo apt install xclip -y
-
 echo 'alias copy="xclip -selection clipboard"' >> ~/.bash_aliases
 echo 'alias paste="xclip -selection clipboard -o"' >> ~/.bash_aliases
+source ~/.bash_aliases
 
 echo 'Installing latest git' 
 sudo add-apt-repository ppa:git-core/ppa -y
@@ -39,27 +39,31 @@ git config --global user.name "$git_config_user_name"
 git config --global user.email $git_config_user_email
 
 echo 'Generating a SSH Key'
-ssh-keygen -t ed25519 -C $git_config_user_email
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -C $git_config_user_email
 ssh-add ~/.ssh/id_ed25519
-cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+cat ~/.ssh/id_ed25519.pub | copy
 echo 'Copied public SSH key to clipboard'
 
 echo 'Installing penv'
 curl https://pyenv.run | bash
-echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 source ~/.bashrc
+pyenv --version
 pyenv install 3
 pyenv global 3
+python --version
 
 echo 'Installling pdm'
-curl -sSL https://pdm-project.org/install-pdm.py | python3 -
+curl -sSL https://pdm-project.org/install-pdm.py | python -
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 
 echo 'Installing bison and gvm'
 sudo apt install bison -y
 bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-echo '[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"' >> ~/.bashrc
 source ~/.bashrc
 
 echo 'Installing go 1.4, 1.17, 1.20'
@@ -71,34 +75,29 @@ gvm use go1.17.13
 export GOROOT_BOOTSTRAP=$GOROOT
 gvm install go1.20
 gvm use go1.20
+go version
 
 echo 'Installing NVM' 
-sh -c "$(curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash)"
-
-export NVM_DIR="$HOME/.nvm" && (
-git clone https://github.com/creationix/nvm.git "$NVM_DIR"
-cd "$NVM_DIR"
-git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
-) && \. "$NVM_DIR/nvm.sh"
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+source ~/.bashrc
 clear
 
 echo 'Installing NodeJS LTS'
 nvm --version
 nvm install --lts
 nvm current
+echo 'NPM version: ' && npm -v
 
 echo 'Installing Yarn'
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-sudo apt update && sudo apt install --no-install-recommends yarn
-echo '"--emoji" true' >> ~/.yarnrc
+npm install --global yarn
+yarn -v
 
 echo 'Installing Typescript'
 yarn global add typescript
 clear
+
+echo 'Installing Prettier'
+npm install --global prettier
 
 echo 'Installing VSCode'
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -110,42 +109,24 @@ sudo apt update && sudo apt install code -y
 echo 'Installing Code Settings Sync'
 code --install-extension Shan.code-settings-sync
 sudo apt install gnome-keyring -y
-cls
 
 echo 'Uinstalling old Docker versions'
 for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt remove $pkg; done
 
 echo 'Installing docker and docker-compose'
-# Add Docker's official GPG key:
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-# Add the repository to Apt sources:
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-sudo groupadd docker
+curl -fsSL https://get.docker.com/ | sh
 sudo usermod -aG docker $USER
-newgrp docker
 sudo chmod 777 /var/run/docker.sock
 docker run --rm hello-world
 
 docker --version
-docker-compose --version
+docker compose version
 
-echo 'Installing Insomnia Core and Omni Theme' 
-echo "deb https://dl.bintray.com/getinsomnia/Insomnia /" \
-  | sudo tee -a /etc/apt/sources.list.d/insomnia.list
-wget --quiet -O - https://insomnia.rest/keys/debian-public.key.asc \
-  | sudo apt-key add -
-sudo apt update && sudo apt install insomnia -y
-mkdir ~/.config/Insomnia/plugins && cd ~/.config/Insomnia/plugins
-git clone https://github.com/Rocketseat/insomnia-omni.git omni-theme && cd ~
+echo 'Installing Postman'
+sudo snap install postman
+
+echo 'Installing Jetbrains Toolbox'
+curl -fsSL https://raw.githubusercontent.com/nagygergo/jetbrains-toolbox-install/master/jetbrains-toolbox.sh | bash
 
 echo 'Installing VLC'
 sudo apt install vlc -y
