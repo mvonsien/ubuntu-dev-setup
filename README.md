@@ -1,6 +1,6 @@
 # Linux Workstation Setup
 
-![CI](https://github.com/marianvon29/ubuntu-dev-setup/workflows/CI/badge.svg)
+[![CI](https://github.com/mvonsien/ubuntu-dev-setup/actions/workflows/installations.yml/badge.svg)](https://github.com/mvonsien/ubuntu-dev-setup/actions/workflows/installations.yml)
 
 This configs were made based on [Erick Wendel's setup](https://github.com/ErickWendel/ew-ubuntu-setup) and my own needs as a JS Developer and other personal stuff.
 
