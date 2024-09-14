@@ -143,7 +143,7 @@ sudo dpkg -i discord.deb
 sudo apt install -f -y && rm discord.deb
 
 echo 'Installing Zoom'
-sudo apt install libxcb-xtest0 libxcb-cursor0
+sudo apt install libxcb-xtest0 libxcb-cursor0 ibus desktop-file-utils
 wget -c https://zoom.us/client/latest/zoom_amd64.deb
 sudo dpkg -i zoom_amd64.deb
 sudo apt install -f -y && rm zoom_amd64.deb
