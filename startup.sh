@@ -143,14 +143,14 @@ wget -c https://zoom.us/client/latest/zoom_amd64.deb
 sudo dpkg -i zoom_amd64.deb
 sudo apt install -f -y && rm zoom_amd64.deb
 
-echo 'Installing Diodon (clipboard history) for Super+V'
+echo 'Installing Diodon (clipboard history manager)'
 sudo apt update
 sudo apt install diodon -y
 gsettings set org.gnome.shell.keybindings toggle-message-tray "['<Control><Super>v']"
-gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "[ '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/' ]"
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Diodon'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command '/user/bin/diodon'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<Super>v'
+echo 'For it to work with a shortcut, create a shortcut under Settings > Keyboard > Keyboard Shortcuts > View and Customize Shortcuts > Custom Shortcuts > Add Shortcut...'
+echo 'As name enter the name for the shortcut (e.g. "Diodon"), as command enter "/user/bin/diodon" and as shortcut select whatever you would like (e.g. "Super+V")'
+read -p "Press [ENTER] to continue when you have set up your shortcut"
+
 
 echo 'Updating and Cleaning Unnecessary Packages'
 sudo -- sh -c 'apt update; apt upgrade -y; apt full-upgrade -y; apt autoremove -y; apt autoclean -y'
