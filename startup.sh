@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -i
 
 echo "Welcome! Let's start setting up your system. It could take more than 10 minutes, be patient"
 
