@@ -27,7 +27,7 @@ echo 'Installing xclip with aliases (copy, paste)'
 sudo apt install xclip -y
 echo 'alias copy="xclip -selection clipboard"' >> ~/.bash_aliases
 echo 'alias paste="xclip -selection clipboard -o"' >> ~/.bash_aliases
-source ~/.bash_aliases
+. ~/.bash_aliases
 
 echo 'Installing latest git' 
 sudo add-apt-repository ppa:git-core/ppa -y
