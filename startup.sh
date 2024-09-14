@@ -7,7 +7,7 @@ git_config_user_name=${git_config_user_name:-Marian Vonsien}
 read -p "Enter your GIT user.email [marianvon29@gmail.com]: " git_config_user_email
 git_config_user_email=${git_config_user_email:-marianvon29@gmail.com}
 read -p "Enter your github username [marianvon29]: " username
-username=${username:-marianvon29}
+username=${username:-mvonsien}
 
 cd ~ && sudo apt update && sudo apt upgrade -y
 
@@ -23,7 +23,7 @@ sudo apt install neofetch -y
 echo 'Installing some basic packages'
 sudo apt install libfuse2 ca-certificates gnupg lsb-release mercurial make binutils gcc build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl -y
 
-echo 'Installing tool to handle clipboard via CLI'
+echo 'Installing xclip with aliases (copy, paste)'
 sudo apt install xclip -y
 echo 'alias copy="xclip -selection clipboard"' >> ~/.bash_aliases
 echo 'alias paste="xclip -selection clipboard -o"' >> ~/.bash_aliases
@@ -52,7 +52,10 @@ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
 echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(pyenv init -)"' >> ~/.bashrc
 echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
-source ~/.bashrc
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 pyenv --version
 pyenv install 3
 pyenv global 3
@@ -61,12 +64,12 @@ python --version
 echo 'Installling pdm'
 curl -sSL https://pdm-project.org/install-pdm.py | python -
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+export PATH="$HOME/.local/bin:$PATH"
 
 echo 'Installing bison and gvm'
 sudo apt install bison -y
 bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-source ~/.bashrc
+source ~/.gvm/scripts/gvm
 
 echo 'Installing go 1.4, 1.17, 1.20'
 gvm install go1.4 -B
@@ -81,7 +84,9 @@ go version
 
 echo 'Installing NVM' 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-source ~/.bashrc
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 
 echo 'Installing NodeJS LTS'
@@ -94,11 +99,9 @@ echo 'Installing Yarn'
 npm install --global yarn
 yarn -v
 
-echo 'Installing Typescript'
-yarn global add typescript
-
 echo 'Installing Prettier'
 npm install --global prettier
+echo "$(which prettier): $(prettier -v)"
 
 echo 'Installing VSCode'
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
