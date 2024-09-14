@@ -20,5 +20,5 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Test installations
-      run: sh startup.sh
+      run: bash startup.sh
       shell: bash
