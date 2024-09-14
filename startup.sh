@@ -46,7 +46,7 @@ ssh-add ~/.ssh/id_ed25519
 cat ~/.ssh/id_ed25519.pub | copy
 echo 'Copied public SSH key to clipboard'
 
-echo 'Installing penv'
+echo 'Installing pyenv'
 curl https://pyenv.run | bash
 echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
 echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
@@ -82,7 +82,7 @@ go version
 echo 'Installing NVM' 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 source ~/.bashrc
-clear
+
 
 echo 'Installing NodeJS LTS'
 nvm --version
@@ -96,7 +96,6 @@ yarn -v
 
 echo 'Installing Typescript'
 yarn global add typescript
-clear
 
 echo 'Installing Prettier'
 npm install --global prettier
@@ -141,6 +140,7 @@ sudo dpkg -i discord.deb
 sudo apt install -f -y && rm discord.deb
 
 echo 'Installing Zoom'
+sudo apt install libxcb-xtest0 libxcb-cursor0
 wget -c https://zoom.us/client/latest/zoom_amd64.deb
 sudo dpkg -i zoom_amd64.deb
 sudo apt install -f -y && rm zoom_amd64.deb
@@ -150,13 +150,13 @@ sudo apt update
 sudo apt install diodon -y
 gsettings set org.gnome.shell.keybindings toggle-message-tray "['<Control><Super>v']"
 echo 'For it to work with a shortcut, create a shortcut under Settings > Keyboard > Keyboard Shortcuts > View and Customize Shortcuts > Custom Shortcuts > Add Shortcut...'
-echo 'As name enter the name for the shortcut (e.g. "Diodon"), as command enter "/user/bin/diodon" and as shortcut select whatever you would like (e.g. "Super+V")'
+echo 'As name enter the name for the shortcut (e.g. "Diodon"), as command enter "/usr/bin/diodon" and as shortcut select whatever you would like (e.g. "Super+V")'
 read -p "Press [ENTER] to continue when you have set up your shortcut"
 
 
 echo 'Updating and Cleaning Unnecessary Packages'
 sudo -- sh -c 'apt update; apt upgrade -y; apt full-upgrade -y; apt autoremove -y; apt autoclean -y'
-clear
+
 
 echo 'Bumping the max file watchers'
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
