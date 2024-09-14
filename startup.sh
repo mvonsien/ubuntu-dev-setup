@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "Welcome! Let's start setting up your system. It could take more than 10 minutes, be patient"
 
 read -p "Enter your GIT user.name [Marian Vonsien]: " git_config_user_name
